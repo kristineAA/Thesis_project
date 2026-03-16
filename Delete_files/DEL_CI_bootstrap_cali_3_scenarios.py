@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Predictions_S2_cali_CV import *
+from Thesis_project.TestingSecondYear.Predictions_S2_CV import *
 
 res = S2_calib_results["residual_raw"].values.astype(float)
 
@@ -9,7 +9,6 @@ daily = S2_test_results.groupby("date", as_index=False).agg(
     predicted=("predicted", "sum"),
     m=("predicted", "size"),
 )
-daily = daily[0:365]
 
 
 rng = np.random.default_rng(0)
