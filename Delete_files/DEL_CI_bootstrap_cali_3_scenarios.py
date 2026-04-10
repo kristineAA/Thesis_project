@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Thesis_project.TestingSecondYear.Predictions_S2_CV import *
+from Thesis_project.Delete_files.TestingSecondYear.Predictions_S2_CV import *
 
 res = S2_calib_results["residual_raw"].values.astype(float)
 
