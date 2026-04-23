@@ -8,20 +8,19 @@ from Predictions_S2_CV import prepare_S2_data, run_prediction_window
 
 rng = np.random.default_rng(0)
 
-
-
 #scenario_names = ["low", "mid", "high"]
-scenario_names = ["very_low", "low", "mid", "high", "very_high"]
-#scenario_names = ["very_low", "mid_low", "low", "mid", "high", "mid_high", "very_high"]
+#scenario_names = ["very_low", "low", "mid", "high", "very_high"]
+scenario_names = ["very_low", "mid_low", "low", "mid", "high", "mid_high", "very_high"]
 k = len(scenario_names)
 
-HALF_YEAR_DAYS = 180
-TOTAL_FORECAST_DAYS = 720
+FORECAST_HORIZON_DAYS = 180   # predict 6 months ahead each time
+ROLL_STEP_DAYS = 90           # roll 3 months each time
+TOTAL_FORECAST_DAYS = 720     # total forecast span = 2 years
 VAL_DAYS = 90
 ALPHA = 0.25
 B = 20000
 
-OUTPUT_DIR = Path("saved_files/rolling_half_year_predictions")
+OUTPUT_DIR = Path("saved_files/rolling_3month_step_predictions")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -64,12 +63,22 @@ def cluster_probs_for_m(
 S2 = prepare_S2_data()
 unique_dates = np.array(sorted(S2["date"].unique()))
 
+# the full 2-year period we want to cover
 forecast_dates = unique_dates[-TOTAL_FORECAST_DAYS:]
 
 all_blocks = []
+block_number = 1
 
-for block_start in range(0, TOTAL_FORECAST_DAYS, HALF_YEAR_DAYS):
-    block_end = min(block_start + HALF_YEAR_DAYS, TOTAL_FORECAST_DAYS)
+for block_start in range(0, TOTAL_FORECAST_DAYS, ROLL_STEP_DAYS):
+    remaining_days = TOTAL_FORECAST_DAYS - block_start
+
+    # Normal runs predict 180 days ahead, but the final run predicts only 90 days
+    if remaining_days <= ROLL_STEP_DAYS:
+        horizon_days = ROLL_STEP_DAYS
+    else:
+        horizon_days = FORECAST_HORIZON_DAYS
+
+    block_end = min(block_start + horizon_days, TOTAL_FORECAST_DAYS)
 
     block_dates = forecast_dates[block_start:block_end]
     test_start_date = pd.to_datetime(block_dates[0])
@@ -77,8 +86,9 @@ for block_start in range(0, TOTAL_FORECAST_DAYS, HALF_YEAR_DAYS):
 
     print("\n" + "=" * 70)
     print(
-        f"Running block {block_start // HALF_YEAR_DAYS + 1}: "
-        f"{test_start_date.date()} to {test_end_date.date()}"
+        f"Running block {block_number}: "
+        f"{test_start_date.date()} to {test_end_date.date()} "
+        f"({len(block_dates)} forecast days)"
     )
 
     out = run_prediction_window(
@@ -131,19 +141,20 @@ for block_start in range(0, TOTAL_FORECAST_DAYS, HALF_YEAR_DAYS):
     )
 
     daily = daily[output_cols].copy()
-    daily["block"] = block_start // HALF_YEAR_DAYS + 1
+    daily["block"] = block_number
 
     file_name = (
-        f"predictions_block_{daily['block'].iloc[0]}_"
+        f"predictions_block_{block_number}_"
         f"{test_start_date.strftime('%Y-%m-%d')}_to_{test_end_date.strftime('%Y-%m-%d')}.csv"
     )
     daily.to_csv(OUTPUT_DIR / file_name, index=False)
 
     all_blocks.append(daily)
+    block_number += 1
 
-final_daily = pd.concat(all_blocks, ignore_index=True).sort_values("date")
-final_daily.to_csv(OUTPUT_DIR / "all_half_year_predictions.csv", index=False)
+final_daily = pd.concat(all_blocks, ignore_index=True).sort_values(["date", "block"])
+final_daily.to_csv(OUTPUT_DIR / "all_rolling_predictions.csv", index=False)
 
 print("\nSaved combined file:")
-print(OUTPUT_DIR / "all_half_year_predictions.csv")
+print(OUTPUT_DIR / "all_rolling_predictions.csv")
 print(final_daily.head())

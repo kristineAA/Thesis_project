@@ -101,12 +101,6 @@ final_model = xgb.train(
     evals=[(dtrain,"train"),(dval,"val")],
     verbose_eval=False,
 )
-xgb.plot_importance(final_model)
-plt.show()
-
-# plot first tree (tree index 0)
-xgb.plot_tree(final_model, num_trees=0)
-plt.show()
 
 # -------- evaluate on validation --------
 val_pred = np.round(final_model.predict(dval))

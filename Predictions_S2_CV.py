@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 import sys
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(PROJECT_ROOT))
@@ -245,6 +246,14 @@ def run_prediction_window(
         early_stopping_rounds=50,
         verbose_eval=False,
     )
+    xgb.plot_importance(final_model)
+    plt.savefig("feature_importance.png")
+    plt.close()
+
+    # plot random tree
+    xgb.plot_tree(final_model, num_trees=np.random.randint(0, final_model.num_boosted_rounds()))
+    plt.savefig("random_tree.png")
+    plt.close()
 
     val_pred = final_model.predict(dval)
     test_pred = np.round(final_model.predict(dtest))
