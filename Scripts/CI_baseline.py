@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # data
-from Preliminary_Predictions_S2 import *
+from Scripts.Preliminary_Predictions_S2 import *
 
 errors = y_val - val_pred
 q_low, q_high = np.quantile(errors, [0.05, 0.95])

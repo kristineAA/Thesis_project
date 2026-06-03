@@ -2,7 +2,7 @@ import xgboost as xgb
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error
-from CleanDataPreliminary import *
+from Scripts.CleanDataPreliminary import *
 import os, time
 import matplotlib.pyplot as plt
 

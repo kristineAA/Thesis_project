@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from pathlib import Path
 
-from Predictions_S2_CV import prepare_S2_data, run_prediction_window
+from Scripts.Predictions_S2_CV import prepare_S2_data, run_prediction_window
 
 
 rng = np.random.default_rng(0)

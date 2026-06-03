@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Preliminary_Predictions_S2 import *
+from Scripts.Preliminary_Predictions_S2 import *
 
 # raw residuals (row-level) on test
 S2_test_results["residual_raw"] = S2_test_results["n"] - S2_test_results["predicted"]

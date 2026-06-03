@@ -6,11 +6,11 @@ import os
 from pathlib import Path
 
 # Set working directory to the folder where CleanDataPreliminary.py lives
-os.chdir(Path(__file__).resolve().parent)
+project_root = Path(__file__).resolve().parent.parent
 
-print("Working directory set to:", os.getcwd())
+print("Working directory set to:", project_root)
 
-dataset = pd.read_csv('Raw data from SVP/20200611DailyCountsOfPlateletReturnsAndDeliveries.txt', delimiter=';')
+dataset = pd.read_csv(project_root / 'Raw data from SVP' / '20200611DailyCountsOfPlateletReturnsAndDeliveries.txt', delimiter=';')
 
 # using only relevant columns and rows
 dataset_filtered = dataset[dataset['class'] != 'return']
@@ -41,13 +41,13 @@ hospital_ids = pd.DataFrame({
     'Hospital Name': unique_names,
     'Hospital ID': range(1, len(unique_names) + 1)
 })
-hospital_ids.to_csv('hospital_ids.csv', index=False)
+hospital_ids.to_csv(project_root / 'hospital_ids.csv', index=False)
 # join the IDs to data
 dataset_filtered = dataset_filtered.merge(hospital_ids, left_on='name', right_on='Hospital Name', how='left')
 dataset_filtered = dataset_filtered.drop(columns=['Hospital Name'])
 
 # import csv file again with locations
-hospital_ids = pd.read_csv('finland_hospitals_with_regions.csv', sep=';')
+hospital_ids = pd.read_csv(project_root / 'Input Files' / 'finland_hospitals_with_regions.csv', sep=';')
 # cleaning
 hospital_ids['y_lat'] = hospital_ids['y_lat'].str.replace(',', '.').astype(float)
 hospital_ids['x_lon'] = hospital_ids['x_lon'].str.replace(',', '.').astype(float)
@@ -57,5 +57,5 @@ dataset_filtered = dataset_filtered.merge(hospital_ids, left_on='Hospital ID', r
 dataset_filtered = dataset_filtered.drop(columns=['hospital_id', 'hospital_name'])
 
 # adding holidays
-holidays= pd.read_csv('finnish_holidays_2012_2021.csv', sep=',')
+holidays= pd.read_csv(project_root / 'Input Files' / 'finnish_holidays_2012_2021.csv', sep=',')
 dataset_filtered['is_holiday'] = dataset_filtered['date'].isin(pd.to_datetime(holidays['date'])).astype(int)

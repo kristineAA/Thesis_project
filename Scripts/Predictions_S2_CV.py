@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(PROJECT_ROOT))
 
-from CleanDataPreliminary import dataset_filtered
+from Scripts.CleanDataPreliminary import dataset_filtered
 
 
 # ================= data preparation =================
@@ -246,13 +246,19 @@ def run_prediction_window(
         early_stopping_rounds=50,
         verbose_eval=False,
     )
+    plt.figure(figsize=(12, 8))  # make figure larger
+
     xgb.plot_importance(final_model)
-    plt.savefig("feature_importance.png")
+
+    plt.tight_layout()           # automatically fix spacing
+    plt.subplots_adjust(left=0.3)  # extra room for long labels
+
+    plt.savefig("feature_importance.png", bbox_inches="tight")
     plt.close()
 
     # plot random tree
-    xgb.plot_tree(final_model, num_trees=np.random.randint(0, final_model.num_boosted_rounds()))
-    plt.savefig("random_tree.png")
+    xgb.plot_tree(final_model, num_trees=1)
+    plt.savefig("random_tree.png", bbox_inches="tight")
     plt.close()
 
     val_pred = final_model.predict(dval)

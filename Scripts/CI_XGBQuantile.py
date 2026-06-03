@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # data
-from Preliminary_Predictions_S2 import *
+from Scripts.Preliminary_Predictions_S2 import *
 
 def train_quantile_model(alpha):
     params = {
