@@ -93,6 +93,6 @@ def plot_existing_clusters_for_day(
     plt.title(f"Daily Error Clusters | {day} | m={m}")
     plt.xlabel("Simulated Daily Error")
     plt.ylabel("Frequency")
-    plt.legend()
+    plt.legend(fontsize=16)
     plt.tight_layout()
     plt.show()

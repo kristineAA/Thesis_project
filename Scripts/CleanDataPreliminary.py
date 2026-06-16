@@ -41,7 +41,7 @@ hospital_ids = pd.DataFrame({
     'Hospital Name': unique_names,
     'Hospital ID': range(1, len(unique_names) + 1)
 })
-hospital_ids.to_csv(project_root / 'hospital_ids.csv', index=False)
+hospital_ids.to_csv(project_root / 'Input Files' / 'hospital_ids.csv', index=False)
 # join the IDs to data
 dataset_filtered = dataset_filtered.merge(hospital_ids, left_on='name', right_on='Hospital Name', how='left')
 dataset_filtered = dataset_filtered.drop(columns=['Hospital Name'])

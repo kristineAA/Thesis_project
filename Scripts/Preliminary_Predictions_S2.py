@@ -22,7 +22,7 @@ S2['name'] = S2['name'].astype('category')
 S2['region'] = S2['region'].astype('category')
 
 # ================= split =================
-test_days = 90
+test_days = 14
 val_days = 90
 
 max_date = S2['date'].max()
