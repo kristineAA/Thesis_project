@@ -241,7 +241,7 @@ function runRollingHorizonCluster(T, Xi, D, Pxi, B, T_max)
         # Update w for the next window
         w += 90
     end
-
+end
 # ============================
 # With 1 scenario
 # ============================
