@@ -110,7 +110,7 @@ function create_rolling_horizon_model_cluster(window, rolling_horizon_length, T,
     @variable(model, f[xi in Xi, t in T[window:window+rolling_horizon_length-1]] >= 0)
 
     @variable(model, b[xi in Xi, t in T[window:window+rolling_horizon_length-1]], Bin)
-    @variable(model, s >= 0)
+    @variable(model, s >= 0, Int)
 
     # ============================
     # Objective
@@ -199,7 +199,7 @@ end
 # Code for running the rolling horizon
 # ============================
 
-function runRollingHorizonCluster(T, Xi, D, Pxi, B, T_max)
+function runRollingHorizonCluster(T, Xi, D, Pxi, B, T_max, G)
     # ============================
     # Create tables for vanted stored values
     # ============================
@@ -233,7 +233,7 @@ function runRollingHorizonCluster(T, Xi, D, Pxi, B, T_max)
         # Determine the horizon length for the current window (180 for full windows, 90 for the last window if it exceeds T_max)
         horizon = w <= T_max - L - rolling_horizon ? rolling_horizon : 90
         # run the model for the current window and store the results
-        sl, sv, ov, ie_vals = create_rolling_horizon_model_cluster(w, horizon, T, Xi, D, Pxi, B)
+        sl, sv, ov, ie_vals = create_rolling_horizon_model_cluster(w, horizon, T, Xi, D, Pxi, B, G)
         push!(orderUpToValues, sv)
         push!(serviceLevelValues, sl)
         push!(objectiveValues, ov)
@@ -241,7 +241,9 @@ function runRollingHorizonCluster(T, Xi, D, Pxi, B, T_max)
         # Update w for the next window
         w += 90
     end
+    return orderUpToValues, serviceLevelValues, objectiveValues
 end
+
 # ============================
 # With 1 scenario
 # ============================
@@ -315,6 +317,7 @@ CSV.write("results_scalars_1scen_s_822_$timestamp.csv", df_scalars)
 
 println("Results for 1 scenario saved to CSV files.")
 
+
 # ============================
 # Create tables for vanted stored values for 1 scenario with shortage cost G = 1233
 # ============================
@@ -342,5 +345,35 @@ df_scalars = DataFrame(
     Objective = objectiveValuesClus1_1233
 )
 CSV.write("results_scalars_1scen_s_1233_$timestamp.csv", df_scalars)
+
+println("Results for 1 scenario saved to CSV files.")
+
+# ============================
+# Create tables for vanted stored values for 1 scenario with shortage cost G = 1644
+# ============================
+
+orderUpToValuesClus1_1644 = []
+serviceLevelValuesClus1_1644 = [] 
+objectiveValuesClus1_1644 = []
+
+# ============================
+# Run model for each window and store values for 1 scenario with shortage cost G = 1644
+# ============================
+
+orderUpToValuesClus1_1644, serviceLevelValuesClus1_1644, objectiveValuesClus1_1644 = runRollingHorizonCluster(T, Xi, D_xi_t, Pxi, B, T_max, 1644)
+
+# ============================
+# Save results to CSV for 1 scenario with shortage cost G = 1644
+# ============================
+
+# Save scalar values (one per window) to a single CSV
+timestamp = Dates.format(Dates.now(), "yyyy-mm-dd_HH-MM-SS")
+df_scalars = DataFrame(
+    Window = 1:length(orderUpToValuesClus1_1644),
+    OrderUpTo = orderUpToValuesClus1_1644,
+    ServiceLevel = serviceLevelValuesClus1_1644,
+    Objective = objectiveValuesClus1_1644   
+)
+CSV.write("results_scalars_1scen_s_1644_$timestamp.csv", df_scalars)
 
 println("Results for 1 scenario saved to CSV files.")
