@@ -9,15 +9,49 @@ df = pd.read_csv("Input Files/daily_platelet_demand.csv")
 df["date"] = pd.to_datetime(df["date"])
 df = df.sort_values("date").reset_index(drop=True)
 
+""" # 1
 order_up_to = {
-    1: 157,
-    2: 156,
-    3: 154,
-    4: 159,
-    5: 159,
-    6: 150,
-    7: 146,
-    8: 138,
+    1: 154,
+    2: 144,
+    3: 149,
+    4: 155,
+    5: 155,
+    6: 147,
+    7: 137,
+    8: 144,
+} """
+""" # 3
+order_up_to = {
+    1: 156,
+    2: 141,
+    3: 146,
+    4: 146,
+    5: 165,
+    6: 153,
+    7: 150,
+    8: 144,
+} """
+""" # 5
+order_up_to = {
+    1: 156,
+    2: 155,
+    3: 155,
+    4: 147,
+    5: 153,
+    6: 176,
+    7: 159,
+    8: 162,
+} """
+# 7
+order_up_to = {
+    1: 155,
+    2: 154,
+    3: 151,
+    4: 149,
+    5: 150,
+    6: 158,
+    7: 159,
+    8: 160,
 }
 
 period_starts = [
@@ -211,4 +245,5 @@ for _, row in df.iterrows():
 
 results = pd.DataFrame(results)
 
-results.to_csv("inventory_simulation_daily_detailed.csv", index=False)
+
+results.to_csv('inventory_simulation_daily_detailed_7.csv', index=False)

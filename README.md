@@ -1,7 +1,7 @@
 # Thesis Project – Integration of Machine Learning Models to Predict Demand in Inventory Optimization
 This repository contains the code developed for the master's thesis:
 
-Integration of Machine Learning Models to Predict Demand in Inventory Optimization
+*Integration of Machine Learning Models to Predict Demand in Inventory Optimization*
 
 The project investigates whether machine-learning-based demand forecasting combined with uncertainty quantification and stochastic inventory optimization can improve platelet inventory management compared to traditional moving-average approaches.
 
